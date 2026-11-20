@@ -1,0 +1,78 @@
+# Answer + grade all 150 FinanceBench questions with FREE open-source models (Ollama, CPU).
+# No API key, no cost. Runs as 10 parallel shards, then merges and commits the results.
+#
+# Start it from the Actions tab (Run workflow), or by changing evals/run-request.txt.
+name: free-llm-eval
+
+on:
+  workflow_dispatch:
+  push:
+    paths: ["evals/run-request.txt"]
+
+permissions:
+  contents: write
+
+env:
+  PYTHONPATH: src
+  LLM_PROVIDER: ollama
+  LLM_MODEL: qwen2.5:3b          # answers
+  EVAL_JUDGE_MODEL: llama3.2:3b  # grades; a different model family, to reduce self-grading bias
+  SHARDS: "10"
+
+jobs:
+  answer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -e .
+      - name: Cache filings
+        uses: actions/cache@v4
+        with: { path: data/bronze, key: bronze-financebench-v1 }
+      - name: Cache Ollama models
+        uses: actions/cache@v4
+        with: { path: ~/.ollama/models, key: ollama-qwen2.5-3b-llama3.2-3b }
+      - name: Install and start Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          (ollama serve > /tmp/ollama.log 2>&1 &)
+          for i in $(seq 30); do curl -s localhost:11434/api/tags >/dev/null && break; sleep 2; done
+          ollama pull "$LLM_MODEL"
+          ollama pull "$EVAL_JUDGE_MODEL"
+      - run: python -m docpipe.run --scope eval
+      - name: Answer and grade this shard
+        run: python -m evalkit.run --answers --shard "${{ matrix.shard }}/$SHARDS"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard }}
+          path: evals/results/financebench/answers_*_shard*.jsonl
+
+  merge:
+    needs: answer
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -e .
+      - uses: actions/download-artifact@v4
+        with: { path: shards, pattern: "shard-*", merge-multiple: true }
+      - name: Merge shards and summarize
+        run: |
+          mkdir -p evals/results/financebench
+          cp shards/*.jsonl evals/results/financebench/
+          python -m evalkit.run --merge
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evals/results/financebench/
+          git commit -m "Free-model answer eval results (${LLM_MODEL}, judged by ${EVAL_JUDGE_MODEL}) [skip ci]" || echo "nothing to commit"
+          git pull --rebase && git push

@@ -1,0 +1,90 @@
+{
+  "run_at": "2026-11-19T21:58:49+00:00",
+  "source": "financebench",
+  "scope": "eval",
+  "limit": null,
+  "counts": {
+    "documents": 84,
+    "pages": 12013,
+    "chunks": 37785,
+    "companies": 32,
+    "bronze_mb": 165.5
+  },
+  "ingest": {
+    "downloaded": 84,
+    "skipped_existing": 0,
+    "failed": [],
+    "download_seconds_total": 44.9
+  },
+  "timings_s": {
+    "ingest_s": 8.2,
+    "extract_s": 52.9,
+    "chunk_s": 3.2
+  },
+  "quality_checks": [
+    {
+      "name": "manifest_doc_id_unique",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 duplicates",
+      "critical": true
+    },
+    {
+      "name": "manifest_sha256_not_null",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 nulls",
+      "critical": true
+    },
+    {
+      "name": "pages_key_unique",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 duplicate (doc_id, page_num)",
+      "critical": true
+    },
+    {
+      "name": "every_doc_has_pages",
+      "passed": true,
+      "observed": [],
+      "expected": "[]",
+      "critical": true
+    },
+    {
+      "name": "empty_page_rate",
+      "passed": true,
+      "observed": 0.0077,
+      "expected": "<= 0.1 (scanned/image-only pages have no text layer)",
+      "critical": false
+    },
+    {
+      "name": "every_doc_has_chunks",
+      "passed": true,
+      "observed": [],
+      "expected": "[]",
+      "critical": true
+    },
+    {
+      "name": "chunk_id_unique",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 duplicates",
+      "critical": true
+    },
+    {
+      "name": "chunk_text_not_empty",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 empty chunks",
+      "critical": true
+    },
+    {
+      "name": "company_metadata_present",
+      "passed": true,
+      "observed": 0,
+      "expected": "0 nulls",
+      "critical": true
+    }
+  ],
+  "status": "success"
+}

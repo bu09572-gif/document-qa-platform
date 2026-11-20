@@ -1,0 +1,177 @@
+{
+  "bm25_shared_store": {
+    "overall": {
+      "hit@1": 0.053,
+      "hit@5": 0.113,
+      "hit@10": 0.16,
+      "mrr": 0.082,
+      "doc_hit@5": 0.513
+    },
+    "by_question_type": {
+      "domain-relevant": {
+        "hit@1": 0.06,
+        "hit@5": 0.1,
+        "hit@10": 0.12,
+        "mrr": 0.079,
+        "doc_hit@5": 0.48
+      },
+      "metrics-generated": {
+        "hit@1": 0.0,
+        "hit@5": 0.0,
+        "hit@10": 0.0,
+        "mrr": 0.0,
+        "doc_hit@5": 0.42
+      },
+      "novel-generated": {
+        "hit@1": 0.1,
+        "hit@5": 0.24,
+        "hit@10": 0.36,
+        "mrr": 0.169,
+        "doc_hit@5": 0.64
+      }
+    },
+    "ms_per_query": 2.33,
+    "n": 150
+  },
+  "+page_dedupe": {
+    "overall": {
+      "hit@1": 0.053,
+      "hit@5": 0.12,
+      "hit@10": 0.167,
+      "mrr": 0.084,
+      "doc_hit@5": 0.52
+    },
+    "by_question_type": {
+      "domain-relevant": {
+        "hit@1": 0.06,
+        "hit@5": 0.1,
+        "hit@10": 0.12,
+        "mrr": 0.079,
+        "doc_hit@5": 0.48
+      },
+      "metrics-generated": {
+        "hit@1": 0.0,
+        "hit@5": 0.0,
+        "hit@10": 0.0,
+        "mrr": 0.0,
+        "doc_hit@5": 0.42
+      },
+      "novel-generated": {
+        "hit@1": 0.1,
+        "hit@5": 0.26,
+        "hit@10": 0.38,
+        "mrr": 0.173,
+        "doc_hit@5": 0.66
+      }
+    },
+    "ms_per_query": 16.46,
+    "n": 150
+  },
+  "+metadata_filters": {
+    "overall": {
+      "hit@1": 0.113,
+      "hit@5": 0.233,
+      "hit@10": 0.313,
+      "mrr": 0.16,
+      "doc_hit@5": 0.8
+    },
+    "by_question_type": {
+      "domain-relevant": {
+        "hit@1": 0.12,
+        "hit@5": 0.22,
+        "hit@10": 0.26,
+        "mrr": 0.157,
+        "doc_hit@5": 0.86
+      },
+      "metrics-generated": {
+        "hit@1": 0.04,
+        "hit@5": 0.12,
+        "hit@10": 0.26,
+        "mrr": 0.08,
+        "doc_hit@5": 0.78
+      },
+      "novel-generated": {
+        "hit@1": 0.18,
+        "hit@5": 0.36,
+        "hit@10": 0.42,
+        "mrr": 0.243,
+        "doc_hit@5": 0.76
+      }
+    },
+    "ms_per_query": 15.63,
+    "n": 150
+  },
+  "+query_expansion": {
+    "overall": {
+      "hit@1": 0.107,
+      "hit@5": 0.307,
+      "hit@10": 0.413,
+      "mrr": 0.194,
+      "doc_hit@5": 0.76
+    },
+    "by_question_type": {
+      "domain-relevant": {
+        "hit@1": 0.08,
+        "hit@5": 0.28,
+        "hit@10": 0.4,
+        "mrr": 0.166,
+        "doc_hit@5": 0.86
+      },
+      "metrics-generated": {
+        "hit@1": 0.08,
+        "hit@5": 0.3,
+        "hit@10": 0.44,
+        "mrr": 0.182,
+        "doc_hit@5": 0.76
+      },
+      "novel-generated": {
+        "hit@1": 0.16,
+        "hit@5": 0.34,
+        "hit@10": 0.4,
+        "mrr": 0.232,
+        "doc_hit@5": 0.66
+      }
+    },
+    "ms_per_query": 16.57,
+    "n": 150
+  },
+  "single_document_oracle": {
+    "overall": {
+      "hit@1": 0.167,
+      "hit@5": 0.433,
+      "hit@10": 0.62,
+      "mrr": 0.289,
+      "doc_hit@5": 1.0
+    },
+    "by_question_type": {
+      "domain-relevant": {
+        "hit@1": 0.1,
+        "hit@5": 0.32,
+        "hit@10": 0.48,
+        "mrr": 0.209,
+        "doc_hit@5": 1.0
+      },
+      "metrics-generated": {
+        "hit@1": 0.08,
+        "hit@5": 0.4,
+        "hit@10": 0.62,
+        "mrr": 0.217,
+        "doc_hit@5": 1.0
+      },
+      "novel-generated": {
+        "hit@1": 0.32,
+        "hit@5": 0.58,
+        "hit@10": 0.76,
+        "mrr": 0.441,
+        "doc_hit@5": 1.0
+      }
+    },
+    "ms_per_query": 15.83,
+    "n": 150
+  },
+  "_data_check_evidence_alignment": {
+    "evidence_snippets": 189,
+    "found_on_stated_page": 189,
+    "rate": 1.0
+  }
+}

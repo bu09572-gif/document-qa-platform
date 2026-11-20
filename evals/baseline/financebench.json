@@ -1,0 +1,7 @@
+{
+  "retrieval.hit@5": 0.307,
+  "retrieval.hit@10": 0.413,
+  "retrieval.mrr": 0.194,
+  "answers.accuracy": 0.193,
+  "answers.citation_page_precision": 0.355
+}
