@@ -1,10 +1,12 @@
 # Document Q&A Platform for SEC Filings
 
+[![ci](https://github.com/bu09572-gif/document-qa-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/bu09572-gif/document-qa-platform/actions/workflows/ci.yml)
+
 This is three projects that work together. Their code lives in `src/`, so other projects can import it:
 
-- **Filing Ingestion Pipeline** ([`src/docpipe`](../../../src/docpipe)): downloads filings, extracts page text, chunks it, and runs data checks
-- **SEC Filing Q&A with Page Citations** ([`src/docqa`](../../../src/docqa)): retrieval (BM25 with metadata filters) and LLM answers with page citations
-- **LLM Evaluation Harness** ([`src/evalkit`](../../../src/evalkit)): evaluation of retrieval and answers, plus a regression check that runs in CI
+- **Filing Ingestion Pipeline** ([`src/docpipe`](src/docpipe)): downloads filings, extracts page text, chunks it, and runs data checks
+- **SEC Filing Q&A with Page Citations** ([`src/docqa`](src/docqa)): retrieval (BM25 with metadata filters) and LLM answers with page citations
+- **LLM Evaluation Harness** ([`src/evalkit`](src/evalkit)): evaluation of retrieval and answers, plus a regression check that runs in CI
 
 Everything runs on free tools. The default LLM is Qwen2.5-3B through Ollama, so no API key is needed. Groq (free tier) is an optional hosted backend.
 
@@ -113,3 +115,7 @@ LLM backend, set with `LLM_PROVIDER`:
 | `groq` | free tier | `GROQ_API_KEY` |
 
 `DATA_ROOT=s3://bucket/prefix` writes the same layout to S3 (`pip install -e ".[aws]"`), where Athena can read the parquet files.
+
+---
+
+Part of my [AI/ML and data engineering portfolio](https://github.com/bu09572-gif/ai-ml-portfolio), where every project uses real public data and free, open-source tools.

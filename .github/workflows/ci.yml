@@ -1,0 +1,46 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -e ".[dev]"
+      - run: ruff check src tests
+      - run: python -m pytest -q
+
+  real-data-eval:
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -e ".[dev,dense]"
+      - name: Cache downloaded filings (bronze layer)
+        uses: actions/cache@v4
+        with:
+          path: data/bronze
+          key: bronze-financebench-v1
+      - name: Pipeline on real FinanceBench filings
+        run: python -m docpipe.run --scope eval
+      - name: Retrieval evaluation (BM25, filters, expansion, dense, hybrid)
+        run: python -m evalkit.run --dataset financebench --dense
+      - name: Regression gate vs committed baseline
+        run: python -m evalkit.gate --dataset financebench
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-results
+          path: |
+            evals/results/
+            data/reports/

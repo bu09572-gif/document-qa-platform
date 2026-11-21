@@ -1,7 +1,7 @@
 [project]
-name = "ai-ml-portfolio"
+name = "document-qa-platform"
 version = "0.1.0"
-description = "Shared foundations (data pipeline, document Q&A, evaluation platform) for a portfolio of applied AI projects"
+description = "Filing ingestion pipeline, cited document Q&A and an LLM evaluation harness on real SEC filings"
 requires-python = ">=3.10"
 dependencies = [
   "pandas>=2.2", "numpy>=1.26", "scipy>=1.11", "scikit-learn>=1.4", "pyarrow>=15",
