@@ -7,8 +7,7 @@
   "containerEnv": { "PYTHONPATH": "src" },
   "forwardPorts": [8000],
   "secrets": {
-    "GROQ_API_KEY": { "description": "Optional, free (no credit card): faster hosted Llama. Leave empty to use the local Ollama model." },
-    "ANTHROPIC_API_KEY": { "description": "Optional, paid: only if you set LLM_PROVIDER=anthropic." }
+    "GROQ_API_KEY": { "description": "Optional, free (no credit card): faster hosted Llama. Leave empty to use the local Ollama model." }
   },
   "customizations": { "vscode": { "extensions": ["ms-python.python", "charliermarsh.ruff"] } }
 }

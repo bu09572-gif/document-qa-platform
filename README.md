@@ -6,7 +6,7 @@ This is three projects that work together. Their code lives in `src/`, so other 
 - **SEC Filing Q&A with Page Citations** ([`src/docqa`](../../../src/docqa)): retrieval (BM25 with metadata filters) and LLM answers with page citations
 - **LLM Evaluation Harness** ([`src/evalkit`](../../../src/evalkit)): evaluation of retrieval and answers, plus a regression check that runs in CI
 
-Everything runs on free tools. The default LLM is Qwen2.5-3B through Ollama, so no API key is needed. Groq and Claude are optional backends.
+Everything runs on free tools. The default LLM is Qwen2.5-3B through Ollama, so no API key is needed. Groq (free tier) is an optional hosted backend.
 
 ## Data
 
@@ -111,6 +111,5 @@ LLM backend, set with `LLM_PROVIDER`:
 |---|---|---|
 | `ollama` (default) | free | nothing; change the model with `LLM_MODEL` |
 | `groq` | free tier | `GROQ_API_KEY` |
-| `anthropic` | paid | `ANTHROPIC_API_KEY` |
 
 `DATA_ROOT=s3://bucket/prefix` writes the same layout to S3 (`pip install -e ".[aws]"`), where Athena can read the parquet files.

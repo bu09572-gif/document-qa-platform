@@ -1,13 +1,12 @@
 """Unit tests. Tiny hand-written inputs check the logic; the real numbers come from
 running the pipeline and evals on FinanceBench (see README)."""
-from types import SimpleNamespace
 
 import pandas as pd
 import pytest
 
 from docpipe.chunk import build_chunks, chunk_page
 from docpipe.quality import run_checks
-from docqa.answer import Answer, answer, build_content
+from docqa.answer import Answer, answer
 from docqa.retrieve import Retriever, detect_filters, expand_query, rrf
 from evalkit import metrics as M
 
@@ -76,19 +75,6 @@ def test_free_path_parses_source_tags(monkeypatch):
     a = answer("ACME FY2022 net sales?", hits, provider="ollama")
     assert [c.page_num for c in a.citations] == [hits[0].page_num]     # [S9] doesn't exist, duplicate [S1] dropped
     assert a.cost_usd == 0.0
-
-
-def test_anthropic_path_parses_native_citations():
-    hits, _ = Retriever(_chunks()).search("ACME FY2022 net sales", k=2)
-    cit = SimpleNamespace(document_index=0, cited_text="Net sales were $1,577 million")
-    resp = SimpleNamespace(stop_reason="end_turn", model="claude-opus-5-5",
-                           usage=SimpleNamespace(input_tokens=1000, output_tokens=100),
-                           content=[SimpleNamespace(type="text", text="$1,577 million.", citations=[cit])])
-    client = SimpleNamespace(beta=SimpleNamespace(messages=SimpleNamespace(create=lambda **kw: resp)))
-    a = answer("ACME FY2022 net sales?", hits, provider="anthropic", client=client)
-    assert a.citations[0].page_num == hits[0].page_num
-    assert a.cost_usd == pytest.approx((1000 * 4 + 100 * 20) / 1e6)
-    assert build_content("q", hits)[0]["citations"] == {"enabled": True}
 
 
 def test_summary_from_rows():

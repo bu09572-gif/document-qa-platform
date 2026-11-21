@@ -2,7 +2,7 @@
 
     GET  /health
     POST /search   {"question": "...", "k": 5}           retrieval only (no API key needed)
-    POST /ask      {"question": "...", "k": 5}           retrieval + cited answer from Claude
+    POST /ask      {"question": "...", "k": 5}           retrieval + cited answer from the LLM
 
 Run:  uvicorn docqa.api:app --reload   (PYTHONPATH=src, after running the pipeline)
 """
