@@ -30,7 +30,7 @@
         "doc_hit@5": 0.64
       }
     },
-    "ms_per_query": 2.33,
+    "ms_per_query": 1.97,
     "n": 150
   },
   "+page_dedupe": {
@@ -64,7 +64,7 @@
         "doc_hit@5": 0.66
       }
     },
-    "ms_per_query": 16.46,
+    "ms_per_query": 9.7,
     "n": 150
   },
   "+metadata_filters": {
@@ -98,7 +98,7 @@
         "doc_hit@5": 0.76
       }
     },
-    "ms_per_query": 15.63,
+    "ms_per_query": 10.12,
     "n": 150
   },
   "+query_expansion": {
@@ -132,7 +132,41 @@
         "doc_hit@5": 0.66
       }
     },
-    "ms_per_query": 16.57,
+    "ms_per_query": 9.84,
+    "n": 150
+  },
+  "+filing_routing_v2": {
+    "overall": {
+      "hit@1": 0.127,
+      "hit@5": 0.38,
+      "hit@10": 0.547,
+      "mrr": 0.239,
+      "doc_hit@5": 0.953
+    },
+    "by_question_type": {
+      "domain-relevant": {
+        "hit@1": 0.1,
+        "hit@5": 0.3,
+        "hit@10": 0.44,
+        "mrr": 0.202,
+        "doc_hit@5": 0.98
+      },
+      "metrics-generated": {
+        "hit@1": 0.08,
+        "hit@5": 0.4,
+        "hit@10": 0.62,
+        "mrr": 0.217,
+        "doc_hit@5": 1.0
+      },
+      "novel-generated": {
+        "hit@1": 0.2,
+        "hit@5": 0.44,
+        "hit@10": 0.58,
+        "mrr": 0.299,
+        "doc_hit@5": 0.88
+      }
+    },
+    "ms_per_query": 10.67,
     "n": 150
   },
   "single_document_oracle": {
@@ -166,8 +200,12 @@
         "doc_hit@5": 1.0
       }
     },
-    "ms_per_query": 15.83,
+    "ms_per_query": 9.39,
     "n": 150
+  },
+  "_split": {
+    "name": "all",
+    "questions": 150
   },
   "_data_check_evidence_alignment": {
     "evidence_snippets": 189,

@@ -35,31 +35,29 @@ RETRIEVAL_CONFIGS = {
     "+page_dedupe":            dict(use_filters=False, expand=False, dedupe_pages=True),
     "+metadata_filters":       dict(use_filters=True, expand=False, dedupe_pages=True),
     "+query_expansion":        dict(use_filters=True, expand=True, dedupe_pages=True),
+    "+filing_routing_v2":      dict(use_filters=True, expand=True, dedupe_pages=True, routing="v2"),
     "single_document_oracle":  dict(oracle_doc=True, expand=True, dedupe_pages=True),
 }
-DEFAULT_CONFIG = "+query_expansion"
-# Added only when sentence-transformers is installed (it downloads an embedding model):
+DEFAULT_CONFIG = "+filing_routing_v2"
+# Added only when sentence-transformers is installed (pip install -e ".[dense]"):
 DENSE_CONFIGS = {
-    "dense_only+filters":      dict(use_filters=True, expand=False, dedupe_pages=True, mode="dense"),
-    "hybrid_bm25_dense+filters": dict(use_filters=True, expand=True, dedupe_pages=True, mode="hybrid"),
+    "dense_only+routing_v2":   dict(use_filters=True, expand=False, dedupe_pages=True, mode="dense", routing="v2"),
+    "+hybrid_bm25_dense":      dict(use_filters=True, expand=True, dedupe_pages=True, mode="hybrid", routing="v2"),
+    "+reranker":               dict(use_filters=True, expand=True, dedupe_pages=True, mode="hybrid", routing="v2",
+                                    rerank=30),
 }
 
 
-def load_encoder():
-    """Optional embedding model for dense/hybrid retrieval. Returns None if not installed."""
-    name = os.environ.get("DOCQA_EMBED_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+def load_models(chunks: pd.DataFrame):
+    """Embedding model + chunk vectors + reranker, or (None, None, None) if sentence-transformers is missing."""
     try:
-        from sentence_transformers import SentenceTransformer
+        import sentence_transformers  # noqa: F401
     except ImportError:
-        return None
-
-    class Enc:
-        def __init__(self):
-            self.m = SentenceTransformer(name)
-
-        def encode(self, texts):
-            return self.m.encode(texts, batch_size=64, show_progress_bar=False, convert_to_numpy=True)
-    return Enc()
+        return None, None, None
+    from docqa.models import Encoder, Reranker, embeddings_for
+    enc = Encoder()
+    emb = embeddings_for(chunks, enc, storage.path("gold", "financebench"))
+    return enc, emb, Reranker()
 
 
 def _search(r: Retriever, item, k: int, cfg: dict):
@@ -115,6 +113,7 @@ def eval_answers(items, r: Retriever, config: str, k: int, out_path: Path) -> No
             a = answer(it.question, hits)
             g = M.judge(it.question, it.gold_answer, a.text, provider=judge_provider)   # final grade is set in summarize()
             cited = [M.page_key(c.doc_id, c.page_num) for c in a.citations]
+            got = [M.page_key(h.doc_id, h.page_num) for h in hits]
             row = {"id": it.id, "question": it.question, "gold_answer": it.gold_answer, "answer": a.text,
                    "question_type": it.tags.get("question_type"), "grade": g["grade"], "judge_reason": g["reason"],
                    "numeric_match": M.numeric_match(a.text, it.gold_answer),
@@ -122,7 +121,11 @@ def eval_answers(items, r: Retriever, config: str, k: int, out_path: Path) -> No
                    "citations": cited, "citation_page_precision": M.citation_page_precision(cited, gold),
                    "refused": a.refused, "input_tokens": a.input_tokens, "output_tokens": a.output_tokens,
                    "cost_usd": a.cost_usd, "latency_s": a.latency_s, "provider": a.provider, "model": a.model,
-                   "judge_model": g["judge_model"], "config": config, "k": k}
+                   "judge_model": g["judge_model"], "config": config, "k": k,
+                   "retrieved": got, "gold_pages": sorted(gold), "gold_doc": it.doc_id,
+                   "evidence_pages_found": sum(p in got for p in gold), "doc_hit": any(h.doc_id == it.doc_id for h in hits),
+                   "skill": it.tags.get("skill"), "answer_type": it.tags.get("answer_type"),
+                   "context_chars": sum(len(h.text) for h in hits)}
             fh.write(json.dumps(row) + "\n")
             fh.flush()
             print(f"[{i}/{len(items)}] {g['grade']:9s} num={row['numeric_match']} {a.latency_s:5.1f}s {it.id}", flush=True)
@@ -177,7 +180,8 @@ def merge(out: Path, tag: str) -> dict:
     s = summarize(df)
     text = json.dumps(s, indent=2, default=lambda o: o.item() if hasattr(o, "item") else str(o))
     (out / f"answers_summary_{tag}.json").write_text(text)
-    (out / "answers_summary.json").write_text(text)
+    if not tag.startswith(("golden_", "dev_")):
+        (out / "answers_summary.json").write_text(text)
     df.to_json(out / f"answers_{tag}.jsonl", orient="records", lines=True)
     for f in out.glob(f"answers_{tag}_shard*.jsonl"):   # shards are merged; remove them only after the write succeeded
         f.unlink()
@@ -189,30 +193,47 @@ def main(argv=None):
     ap.add_argument("--dataset", default="financebench", choices=list(DATASETS))
     ap.add_argument("--answers", action="store_true", help="generate + grade answers with the configured LLM")
     ap.add_argument("--merge", action="store_true", help="combine answer shards and write the summary")
-    ap.add_argument("--config", default=DEFAULT_CONFIG, choices=list(RETRIEVAL_CONFIGS))
+    ap.add_argument("--merge-tag", help="merge the shards of this run tag (file name after 'answers_')")
+    ap.add_argument("--config", default=DEFAULT_CONFIG, choices=list(RETRIEVAL_CONFIGS) + list(DENSE_CONFIGS))
     ap.add_argument("--k", type=int, default=5)
     ap.add_argument("--limit", type=int)
     ap.add_argument("--shard", default=None, help="i/n: answer only every n-th question starting at i (parallel CI jobs)")
-    ap.add_argument("--dense", action="store_true", help="also evaluate dense and hybrid retrieval")
+    ap.add_argument("--dense", action="store_true", help="also evaluate dense, hybrid and reranked retrieval")
+    ap.add_argument("--split", default="all", choices=["all", "golden", "dev"],
+                    help="golden = the 50 held-out questions, dev = the other 100")
+    ap.add_argument("--tag", default="", help="suffix for the retrieval summary file (e.g. the reranker name)")
     a = ap.parse_args(argv)
 
     from docqa import llm
     tag = f"{llm.PROVIDER}_{llm.model_name().replace(':', '-').replace('/', '-')}"
+    if a.split != "all":
+        tag = f"{a.split}_{a.config.strip('+')}_{tag}"
     out = OUT / a.dataset
     out.mkdir(parents=True, exist_ok=True)
+    if a.merge_tag:
+        print(json.dumps(merge(out, a.merge_tag), indent=2, default=str))
+        return
     if a.merge:
         merge(out, tag)
         print((out / "answers_summary.json").read_text())
         return
 
-    items = DATASETS[a.dataset]()
+    if a.split == "golden":
+        from .dataset import load
+        from .golden import GOLDEN
+        items = load(GOLDEN)                        # reviewed items, with the corrected answer
+    else:
+        from .golden import split
+        items = split(DATASETS[a.dataset](), a.split)
     if a.limit:
         items = items[: a.limit]
     chunks = pd.read_parquet(storage.path("gold", a.dataset, "chunks.parquet"))
-    enc = load_encoder() if a.dense else None
-    if enc is not None:
-        RETRIEVAL_CONFIGS.update(DENSE_CONFIGS)
-    r = Retriever(chunks, encoder=enc)
+    enc = emb = rr = None
+    if a.dense or a.config in DENSE_CONFIGS:
+        enc, emb, rr = load_models(chunks)
+        if enc is not None:
+            RETRIEVAL_CONFIGS.update(DENSE_CONFIGS)
+    r = Retriever(chunks, encoder=enc, reranker=rr, embeddings=emb)
 
     if a.answers:
         name = f"answers_{tag}.jsonl"
@@ -227,10 +248,16 @@ def main(argv=None):
         return
 
     ret = eval_retrieval(items, r)
+    ret["_split"] = {"name": a.split, "questions": len(items)}
+    if rr is not None:
+        ret["_models"] = {"embedding": enc.name, "reranker": rr.name}
     pages_path = storage.path("silver", a.dataset, "pages.parquet")
     if all(it.raw_evidence for it in items) and storage.exists(pages_path):
         ret["_data_check_evidence_alignment"] = evidence_alignment(items, pd.read_parquet(pages_path))
-    (out / "retrieval_summary.json").write_text(json.dumps(ret, indent=2))
+    name = "retrieval_summary.json" if a.split == "all" else f"retrieval_summary_{a.split}.json"
+    if a.tag:
+        name = name.replace(".json", f"_{a.tag}.json")
+    (out / name).write_text(json.dumps(ret, indent=2))
     print(pd.DataFrame({k: v["overall"] for k, v in ret.items() if not k.startswith("_")}).T.to_string())
     print("evidence alignment:", ret.get("_data_check_evidence_alignment"))
 

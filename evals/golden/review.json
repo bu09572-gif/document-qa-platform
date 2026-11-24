@@ -1,0 +1,259 @@
+{
+ "financebench_id_00299": {
+  "tags": {
+   "skill": "lookup",
+   "answer_type": "text"
+  }
+ },
+ "financebench_id_00302": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_00394": {
+  "tags": {
+   "skill": "lookup",
+   "answer_type": "text"
+  }
+ },
+ "financebench_id_00460": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_00464": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_00724": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_00746": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01009": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01077": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01091": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01163": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01244": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01279": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01346": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01351": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01482": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01487": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01858": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_01981": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_02049": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_03029": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_04171": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_04700": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_07661": {
+  "tags": {
+   "skill": "lookup"
+  }
+ },
+ "financebench_id_00206": {
+  "tags": {
+   "skill": "judgment"
+  }
+ },
+ "financebench_id_00606": {
+  "tags": {
+   "skill": "judgment"
+  },
+  "note": "The evidence page does not state the wage ratio. The expert answer is inferred from 'deleverage of store payroll and benefits due to wage investments'. Kept, but it is a hard question."
+ },
+ "financebench_id_00702": {
+  "tags": {
+   "skill": "judgment"
+  }
+ },
+ "financebench_id_00723": {
+  "tags": {
+   "skill": "judgment"
+  }
+ },
+ "financebench_id_00839": {
+  "tags": {
+   "skill": "judgment"
+  }
+ },
+ "financebench_id_00956": {
+  "tags": {
+   "skill": "judgment"
+  }
+ },
+ "financebench_id_00080": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_00222": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_00283": {
+  "tags": {
+   "skill": "calculation",
+   "answer_type": "number"
+  },
+  "gold_answer": "About $70 million (roughly 10% of the expected $700 million is still to come).",
+  "note": "The dataset answer is 77.78. The filing says costs of about $700 million, of which about 90% has been incurred, so about $70 million remains. 77.78 is 700 / 9, which does not follow from the text. I grade against $70 million."
+ },
+ "financebench_id_00382": {
+  "tags": {
+   "skill": "calculation"
+  },
+  "note": "The ~90% share has to be computed from the segment EBITDAR table."
+ },
+ "financebench_id_00517": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_00566": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_00585": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_02987": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_03471": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_03620": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_03856": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_04080": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_04254": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_04735": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_04784": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_04854": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_06272": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_06741": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_07507": {
+  "tags": {
+   "skill": "calculation"
+  }
+ },
+ "financebench_id_10420": {
+  "tags": {
+   "skill": "calculation"
+  }
+ }
+}

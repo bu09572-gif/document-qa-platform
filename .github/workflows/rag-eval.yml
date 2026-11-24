@@ -1,0 +1,140 @@
+# Production RAG evaluation on the golden set, with free models (no API key, $0).
+#
+#   stage=retrieval   every retrieval setting on the dev (100) and golden (50) questions, with two
+#                     rerankers; commits evals/results/financebench/retrieval_summary_{dev,golden}*.json
+#   stage=answers     answer + grade the golden 50 for each (config, model) pair, then the failure analysis
+#
+# Start from the Actions tab, or: gh api -X POST .../actions/workflows/rag-eval.yml/dispatches -f ref=main -f inputs[stage]=retrieval
+name: rag-eval
+
+on:
+  workflow_dispatch:
+    inputs:
+      stage: { description: "retrieval or answers", required: true, default: "retrieval" }
+      runs: { description: "answers: config:model pairs, comma separated", required: false,
+              default: "+query_expansion:qwen2.5:3b,+reranker:qwen2.5:3b,+reranker:qwen2.5:7b" }
+      judge: { description: "grader model (a different family from the answer models)", required: false, default: "llama3.1:8b" }
+
+permissions:
+  contents: write
+
+env:
+  PYTHONPATH: src
+  DOCQA_MODEL_DIR: models/cache
+  HF_HUB_DISABLE_TELEMETRY: "1"
+
+jobs:
+  retrieval:
+    if: inputs.stage == 'retrieval'
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install -e ".[dense]"
+      - uses: actions/cache@v4
+        with: { path: data/bronze, key: bronze-financebench-v1 }
+      - uses: actions/cache@v4
+        with: { path: models/cache, key: models-v1-bge-small-bge-reranker-base-minilm }
+      - uses: actions/cache@v4
+        with: { path: "data/gold/financebench/emb_*.npy", key: emb-bge-small-v1-${{ hashFiles('src/docpipe/chunk.py') }} }
+      - run: python -m docpipe.run --scope eval
+      - run: python -m docqa.models --fetch && DOCQA_RERANK_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2 python -m docqa.models --fetch
+      - name: Dev and golden, reranker bge-reranker-base
+        run: |
+          python -m evalkit.run --split dev --dense
+          python -m evalkit.run --split golden --dense
+      - name: Dev and golden, reranker ms-marco-MiniLM-L-6
+        env: { DOCQA_RERANK_MODEL: cross-encoder/ms-marco-MiniLM-L-6-v2 }
+        run: |
+          python -m evalkit.run --split dev --dense --tag minilm
+          python -m evalkit.run --split golden --dense --tag minilm
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evals/results/financebench/retrieval_summary_*.json
+          git commit -m "Retrieval eval on dev and golden splits [skip ci]" || echo "nothing to commit"
+          git pull --rebase && git push
+
+  plan:
+    if: inputs.stage == 'answers'
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - id: m
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          runs = [r.split(":", 1) for r in "${{ inputs.runs }}".split(",") if r.strip()]
+          inc = [{"config": c, "model": m, "shard": s} for c, m in runs for s in range(5)]
+          print("matrix=" + json.dumps({"include": inc}))
+          PY
+
+  answers:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
+    env:
+      LLM_PROVIDER: ollama
+      LLM_MODEL: ${{ matrix.model }}
+      EVAL_JUDGE_MODEL: ${{ inputs.judge }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install -e ".[dense]"
+      - uses: actions/cache@v4
+        with: { path: data/bronze, key: bronze-financebench-v1 }
+      - uses: actions/cache@v4
+        with: { path: models/cache, key: models-v1-bge-small-bge-reranker-base-minilm }
+      - uses: actions/cache/restore@v4
+        with: { path: "data/gold/financebench/emb_*.npy", key: emb-bge-small-v1-${{ hashFiles('src/docpipe/chunk.py') }} }
+      - run: python -m docpipe.run --scope eval
+      - run: python -m docqa.models --fetch
+      - uses: actions/cache@v4
+        with: { path: ~/.ollama/models, key: "ollama-${{ matrix.model }}-${{ inputs.judge }}" }
+      - name: Install and start Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          (ollama serve > /tmp/ollama.log 2>&1 &)
+          for i in $(seq 30); do curl -s localhost:11434/api/tags >/dev/null && break; sleep 2; done
+          ollama pull "$LLM_MODEL"; ollama pull "$EVAL_JUDGE_MODEL"
+      - name: Answer and grade this shard of the golden set
+        run: python -m evalkit.run --split golden --answers --config "${{ matrix.config }}" --shard "${{ matrix.shard }}/5"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ans-${{ strategy.job-index }}
+          path: evals/results/financebench/answers_golden_*_shard*.jsonl
+
+  merge:
+    needs: answers
+    if: always() && needs.answers.result != 'skipped'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -e .
+      - uses: actions/download-artifact@v4
+        with: { path: shards, pattern: "ans-*", merge-multiple: true }
+      - name: Merge, summarize, failure analysis
+        run: |
+          cp shards/*.jsonl evals/results/financebench/
+          for f in $(ls evals/results/financebench/answers_golden_*_shard*.jsonl | sed -E 's/_shard[0-9]+\.jsonl//' | sort -u); do
+            tag=$(basename "$f" | sed -E 's/^answers_//')
+            python -m evalkit.run --merge-tag "$tag"
+            python -m evalkit.failures "evals/results/financebench/answers_${tag}.jsonl"
+          done
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evals/results/financebench/
+          git commit -m "Golden-set answer eval and failure analysis [skip ci]" || echo "nothing to commit"
+          git pull --rebase && git push

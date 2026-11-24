@@ -115,3 +115,44 @@ def test_hit_and_mrr():
     assert M.hit_at_k(["a", "b"], {"b"}, 1) == 0 and M.hit_at_k(["a", "b"], {"b"}, 2) == 1
     assert M.mrr(["a", "b", "c"], {"c"}) == pytest.approx(1 / 3)
     assert M.citation_page_precision(["x", "y"], {"x"}) == 0.5
+
+
+# ---------- v2: routing, golden set, failure buckets ----------
+def _docs():
+    return pd.DataFrame([{"doc_id": d, "company": c, "period": p, "doc_type": t} for d, c, p, t in [
+        ("JPMORGAN_2022_10K", "JPMorgan", 2022, "10K"), ("JPMORGAN_2022Q2_10Q", "JPMorgan", 2022, "10Q"),
+        ("WALMART_2020_10K", "Walmart", 2020, "10K"), ("WALMART_2018_10K", "Walmart", 2018, "10K"),
+        ("BOEING_2022_10K", "Boeing", 2022, "10K")]])
+
+
+def test_route_alias_quarter_and_latest_year():
+    from docqa.retrieve import route
+    assert route("In 2022 Q2, which of JPM's segments had the highest net income?", _docs())[0] == ["JPMORGAN_2022Q2_10Q"]
+    assert route("FY2018 - FY2020 3 year average EBITDA margin for Walmart?", _docs())[0] == ["WALMART_2020_10K"]
+    ids, info = route("What production rate changes is Boeing forecasting for FY2023?", _docs())
+    assert ids == ["BOEING_2022_10K"] and "period" not in info      # no 2023 filing: don't filter to nothing
+    assert route("What is the capital of France?", _docs())[0] is None
+
+
+def test_golden_selection_is_stratified_and_stable():
+    from evalkit.dataset import EvalItem
+    from evalkit.golden import select
+    items = [EvalItem(f"q{i}", "q", "1", tags={"question_type": "abc"[i % 3]}, doc_id="X_10K") for i in range(150)]
+    a, b = select(items), select(list(reversed(items)))
+    assert len(a) == 50 and [i.id for i in a] == [i.id for i in b]
+    assert sorted(sum(i.tags["question_type"] == t for i in a) for t in "abc") == [16, 17, 17]
+
+
+def test_failure_buckets():
+    from types import SimpleNamespace as S
+
+    from evalkit.failures import bucket
+    base = dict(final_grade="incorrect", doc_hit=True, gold_pages=["a:1"], evidence_pages_found=1,
+                answer_type="number", numeric_match=0.0)
+    assert bucket(S(**{**base, "final_grade": "correct"})) == "correct"
+    assert bucket(S(**{**base, "doc_hit": False})) == "wrong_filing"
+    assert bucket(S(**{**base, "evidence_pages_found": 0})) == "evidence_page_missed"
+    assert bucket(S(**{**base, "gold_pages": ["a:1", "a:2"]})) == "partial_evidence"
+    assert bucket(S(**{**base, "final_grade": "refused"})) == "refused_with_evidence"
+    assert bucket(S(**base)) == "wrong_number"
+    assert bucket(S(**{**base, "answer_type": "text", "numeric_match": None})) == "wrong_conclusion"

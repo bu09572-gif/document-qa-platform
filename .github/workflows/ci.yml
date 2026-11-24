@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12", cache: pip }
-      - run: pip install -e ".[dev,dense]"
+      - run: pip install -e ".[dev]"
       - name: Cache downloaded filings (bronze layer)
         uses: actions/cache@v4
         with:
@@ -33,8 +33,8 @@ jobs:
           key: bronze-financebench-v1
       - name: Pipeline on real FinanceBench filings
         run: python -m docpipe.run --scope eval
-      - name: Retrieval evaluation (BM25, filters, expansion, dense, hybrid)
-        run: python -m evalkit.run --dataset financebench --dense
+      - name: Retrieval evaluation (BM25 settings, all 150 questions)
+        run: python -m evalkit.run --dataset financebench
       - name: Regression gate vs committed baseline
         run: python -m evalkit.gate --dataset financebench
       - uses: actions/upload-artifact@v4
