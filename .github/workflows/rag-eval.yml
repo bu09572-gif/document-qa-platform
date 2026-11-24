@@ -38,7 +38,7 @@ jobs:
       - uses: actions/cache@v4
         with: { path: models/cache, key: models-v1-bge-small-bge-reranker-base-minilm }
       - uses: actions/cache@v4
-        with: { path: "data/gold/financebench/emb_*.npy", key: emb-bge-small-v1-${{ hashFiles('src/docpipe/chunk.py') }} }
+        with: { path: "data/gold/financebench/emb_*.npy", key: "emb-bge-small-v1-${{ hashFiles('src/docpipe/chunk.py') }}" }
       - run: python -m docpipe.run --scope eval
       - run: python -m docqa.models --fetch && DOCQA_RERANK_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2 python -m docqa.models --fetch
       - name: Dev and golden, reranker bge-reranker-base
@@ -94,7 +94,7 @@ jobs:
       - uses: actions/cache@v4
         with: { path: models/cache, key: models-v1-bge-small-bge-reranker-base-minilm }
       - uses: actions/cache/restore@v4
-        with: { path: "data/gold/financebench/emb_*.npy", key: emb-bge-small-v1-${{ hashFiles('src/docpipe/chunk.py') }} }
+        with: { path: "data/gold/financebench/emb_*.npy", key: "emb-bge-small-v1-${{ hashFiles('src/docpipe/chunk.py') }}" }
       - run: python -m docpipe.run --scope eval
       - run: python -m docqa.models --fetch
       - uses: actions/cache@v4

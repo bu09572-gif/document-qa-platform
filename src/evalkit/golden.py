@@ -47,7 +47,7 @@ def select(items: list[EvalItem], size: int = SIZE) -> list[EvalItem]:
         groups.setdefault(stratum(it), []).append(it)
     quota = {k: size * len(v) / len(items) for k, v in groups.items()}
     take = {k: int(q) for k, q in quota.items()}
-    for k in sorted(quota, key=lambda k: quota[k] - take[k], reverse=True)[: size - sum(take.values())]:
+    for k in sorted(quota, key=lambda k: (take[k] - quota[k], k))[: size - sum(take.values())]:
         take[k] += 1                                  # largest remainder, so the total is exactly `size`
     out = []
     for k in sorted(groups):
