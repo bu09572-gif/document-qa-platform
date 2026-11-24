@@ -1,0 +1,35 @@
+{
+  "n": 50,
+  "config": "+hybrid_bm25_dense",
+  "k": 5,
+  "provider": "ollama",
+  "model": "qwen2.5:7b",
+  "judge_model": "llama3.1:8b",
+  "accuracy": 0.36,
+  "accuracy_when_answered": 0.692,
+  "accuracy_llm_judge_alone": 0.88,
+  "judge_called_refusals_correct": 0.875,
+  "incorrect_rate": 0.16,
+  "refusal_rate": 0.48,
+  "unparsed_grades": 0,
+  "numeric_match_when_answered": 0.579,
+  "numeric_answers_checked": 19,
+  "refusal_rate_when_retrieval_hit_vs_miss": {
+    "miss": 0.706,
+    "hit": 0.364
+  },
+  "answers_with_citations": 0.76,
+  "citation_page_precision": 0.447,
+  "accuracy_by_question_type": {
+    "domain-relevant": 0.312,
+    "metrics-generated": 0.471,
+    "novel-generated": 0.294
+  },
+  "accuracy_when_retrieval_hit_vs_miss": {
+    "miss": 0.118,
+    "hit": 0.485
+  },
+  "cost_usd_total": 0,
+  "latency_s_p50": 74.58,
+  "latency_s_p95": 201.87
+}
