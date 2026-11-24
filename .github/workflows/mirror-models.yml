@@ -1,0 +1,42 @@
+# Copy the open models this project uses into a GitHub release (models-v1), with SHA-256 sums.
+# CI and local runs then download pinned files from one place instead of the model hub.
+name: mirror-models
+
+on:
+  workflow_dispatch:
+  push:
+    paths: ["models/mirror-list.txt"]
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install "huggingface_hub>=0.24"
+      - name: Download and pack
+        run: |
+          mkdir -p out
+          while read -r kind repo file; do
+            [ -z "$kind" ] || [ "${kind#\#}" != "$kind" ] && continue
+            name=$(echo "$repo" | tr '/' '__')
+            if [ "$kind" = "snapshot" ]; then
+              python -c "from huggingface_hub import snapshot_download as s; s('$repo', local_dir='snap/$name', allow_patterns=['*.json','*.txt','*.safetensors','*.model','sentencepiece*','1_Pooling/*'])"
+              tar -C snap -czf "out/$name.tar.gz" "$name"
+            else
+              python -c "from huggingface_hub import hf_hub_download as h; h('$repo', '$file', local_dir='file')"
+              mv "file/$file" "out/$file"
+            fi
+          done < models/mirror-list.txt
+          (cd out && sha256sum * > SHA256SUMS && ls -la)
+      - name: Upload to release models-v1
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          gh release view models-v1 >/dev/null 2>&1 || gh release create models-v1 --title "Pinned model files" \
+            --notes "Open models used by the retrieval and answer steps, copied from the Hugging Face Hub. See models/mirror-list.txt."
+          gh release upload models-v1 out/* --clobber
