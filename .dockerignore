@@ -1,0 +1,5 @@
+.git/
+data/
+models/cache/
+evals/results/
+__pycache__/

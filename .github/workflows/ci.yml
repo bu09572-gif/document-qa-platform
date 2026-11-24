@@ -44,3 +44,22 @@ jobs:
           path: |
             evals/results/
             data/reports/
+
+  image:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t docqa:ci .
+      - name: Start the API container (downloads and indexes the filings on first start)
+        run: |
+          docker run -d --name api -p 8000:8000 -e DOCQA_RETRIEVAL=+filing_routing_v2 docqa:ci
+          for i in $(seq 90); do curl -sf localhost:8000/health && break; sleep 5; done
+      - name: Smoke test
+        run: |
+          curl -sf -X POST localhost:8000/search -H 'content-type: application/json' \
+            -d '{"question": "What is the FY2018 capital expenditure amount for 3M?", "k": 3}' | tee /tmp/r.json
+          grep -q 3M_2018_10K /tmp/r.json
+          curl -sf localhost:8000/metrics | grep -q docqa_retrieval_seconds_count
+      - run: docker logs api | tail -30
+        if: always()
