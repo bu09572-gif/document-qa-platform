@@ -6,8 +6,9 @@
     GET  /metrics  Prometheus: request, retrieval and LLM latency, tokens, refusals, cost, cache hits
 
 Settings (environment):
-    DOCQA_RETRIEVAL   "+reranker" (default: routing v2 + hybrid BM25/dense + cross-encoder reranker, needs
-                      the [dense] extra) or "+filing_routing_v2" (BM25 only, light)
+    DOCQA_RETRIEVAL   "+hybrid_bm25_dense" (routing v2 + BM25 and dense fused, needs the [dense] extra; the best
+                      setting on the dev split), "+reranker" (the same plus a cross-encoder; slower and worse on
+                      this data) or "+filing_routing_v2" (BM25 only, light; the default when nothing is set)
     LLM_PROVIDER / LLM_MODEL   see docqa.llm (default: Ollama, qwen2.5:3b, free)
 
 Run:  uvicorn docqa.api:app --port 8000   (PYTHONPATH=src, after `python -m docpipe.run`)
@@ -48,17 +49,19 @@ def retriever() -> Retriever:
     if not storage.exists(p):
         raise RuntimeError(f"{p} not found: run `python -m docpipe.run` first")
     chunks = pd.read_parquet(p)
-    if RETRIEVAL == "+reranker":
+    if RETRIEVAL in ("+hybrid_bm25_dense", "+reranker"):
         from .models import Encoder, Reranker, embeddings_for
         enc = Encoder()
-        return Retriever(chunks, encoder=enc, reranker=Reranker(),
+        return Retriever(chunks, encoder=enc, reranker=Reranker() if RETRIEVAL == "+reranker" else None,
                          embeddings=embeddings_for(chunks, enc, storage.path("gold", SOURCE)))
     return Retriever(chunks)
 
 
 def _search(q):
     kw = dict(routing="v2")
-    if RETRIEVAL == "+reranker":
+    if RETRIEVAL == "+hybrid_bm25_dense":
+        kw.update(mode="hybrid")
+    elif RETRIEVAL == "+reranker":
         kw.update(mode="hybrid", rerank=30)
     t0 = time.perf_counter()
     hits, filters = retriever().search(q.question, k=q.k, doc_id=q.doc_id, **kw)

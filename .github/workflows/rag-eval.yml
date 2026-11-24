@@ -12,7 +12,7 @@ on:
     inputs:
       stage: { description: "retrieval or answers", required: true, default: "retrieval" }
       runs: { description: "answers: config:model pairs, comma separated", required: false,
-              default: "+query_expansion:qwen2.5:3b,+reranker:qwen2.5:3b,+reranker:qwen2.5:7b" }
+              default: "+query_expansion:qwen2.5:3b,+hybrid_bm25_dense:qwen2.5:3b,+hybrid_bm25_dense:qwen2.5:7b" }
       judge: { description: "grader model (a different family from the answer models)", required: false, default: "llama3.1:8b" }
 
 permissions:
