@@ -30,7 +30,7 @@
         "doc_hit@5": 0.647
       }
     },
-    "ms_per_query": 2.05,
+    "ms_per_query": 2.0,
     "n": 50
   },
   "+page_dedupe": {
@@ -64,7 +64,7 @@
         "doc_hit@5": 0.647
       }
     },
-    "ms_per_query": 10.7,
+    "ms_per_query": 9.14,
     "n": 50
   },
   "+metadata_filters": {
@@ -98,7 +98,7 @@
         "doc_hit@5": 0.765
       }
     },
-    "ms_per_query": 8.81,
+    "ms_per_query": 8.3,
     "n": 50
   },
   "+query_expansion": {
@@ -132,7 +132,7 @@
         "doc_hit@5": 0.647
       }
     },
-    "ms_per_query": 9.4,
+    "ms_per_query": 8.44,
     "n": 50
   },
   "+filing_routing_v2": {
@@ -166,7 +166,7 @@
         "doc_hit@5": 0.882
       }
     },
-    "ms_per_query": 10.34,
+    "ms_per_query": 9.61,
     "n": 50
   },
   "single_document_oracle": {
@@ -200,12 +200,118 @@
         "doc_hit@5": 1.0
       }
     },
-    "ms_per_query": 11.3,
+    "ms_per_query": 8.26,
+    "n": 50
+  },
+  "dense_only+routing_v2": {
+    "overall": {
+      "hit@1": 0.28,
+      "hit@5": 0.58,
+      "hit@10": 0.72,
+      "mrr": 0.42,
+      "doc_hit@5": 1.0
+    },
+    "by_question_type": {
+      "domain-relevant": {
+        "hit@1": 0.312,
+        "hit@5": 0.438,
+        "hit@10": 0.5,
+        "mrr": 0.382,
+        "doc_hit@5": 1.0
+      },
+      "metrics-generated": {
+        "hit@1": 0.353,
+        "hit@5": 0.824,
+        "hit@10": 0.882,
+        "mrr": 0.537,
+        "doc_hit@5": 1.0
+      },
+      "novel-generated": {
+        "hit@1": 0.176,
+        "hit@5": 0.471,
+        "hit@10": 0.765,
+        "mrr": 0.338,
+        "doc_hit@5": 1.0
+      }
+    },
+    "ms_per_query": 68.67,
+    "n": 50
+  },
+  "+hybrid_bm25_dense": {
+    "overall": {
+      "hit@1": 0.28,
+      "hit@5": 0.66,
+      "hit@10": 0.76,
+      "mrr": 0.426,
+      "doc_hit@5": 0.96
+    },
+    "by_question_type": {
+      "domain-relevant": {
+        "hit@1": 0.312,
+        "hit@5": 0.562,
+        "hit@10": 0.688,
+        "mrr": 0.402,
+        "doc_hit@5": 0.938
+      },
+      "metrics-generated": {
+        "hit@1": 0.235,
+        "hit@5": 0.882,
+        "hit@10": 0.941,
+        "mrr": 0.498,
+        "doc_hit@5": 1.0
+      },
+      "novel-generated": {
+        "hit@1": 0.294,
+        "hit@5": 0.529,
+        "hit@10": 0.647,
+        "mrr": 0.378,
+        "doc_hit@5": 0.941
+      }
+    },
+    "ms_per_query": 63.64,
+    "n": 50
+  },
+  "+reranker": {
+    "overall": {
+      "hit@1": 0.14,
+      "hit@5": 0.52,
+      "hit@10": 0.74,
+      "mrr": 0.289,
+      "doc_hit@5": 1.0
+    },
+    "by_question_type": {
+      "domain-relevant": {
+        "hit@1": 0.125,
+        "hit@5": 0.5,
+        "hit@10": 0.625,
+        "mrr": 0.261,
+        "doc_hit@5": 1.0
+      },
+      "metrics-generated": {
+        "hit@1": 0.059,
+        "hit@5": 0.412,
+        "hit@10": 0.882,
+        "mrr": 0.197,
+        "doc_hit@5": 1.0
+      },
+      "novel-generated": {
+        "hit@1": 0.235,
+        "hit@5": 0.647,
+        "hit@10": 0.706,
+        "mrr": 0.408,
+        "doc_hit@5": 1.0
+      }
+    },
+    "ms_per_query": 10269.7,
     "n": 50
   },
   "_split": {
     "name": "golden",
     "questions": 50
+  },
+  "_models": {
+    "embedding": "BAAI/bge-small-en-v1.5",
+    "reranker": "BAAI/bge-reranker-base"
   },
   "_data_check_evidence_alignment": {
     "evidence_snippets": 60,
