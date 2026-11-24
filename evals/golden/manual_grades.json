@@ -1,0 +1,64 @@
+{
+ "what": "Manual grades of every answered yes/no and text question in the three golden-set runs, checked against the expert answer. Numeric answers are not here: they are graded by rule (the gold number must appear) plus the judge. Refusals are detected by rule.",
+ "grades": {
+  "hybrid_bm25_dense_ollama_qwen2.5-3b": {
+   "financebench_id_00517": "correct",
+   "financebench_id_01009": "incorrect",
+   "financebench_id_01279": "correct",
+   "financebench_id_01858": "correct",
+   "financebench_id_00382": "correct",
+   "financebench_id_00566": "incorrect",
+   "financebench_id_00724": "incorrect",
+   "financebench_id_01077": "correct",
+   "financebench_id_01346": "incorrect",
+   "financebench_id_00585": "incorrect",
+   "financebench_id_01351": "correct",
+   "financebench_id_02049": "correct",
+   "financebench_id_00460": "incorrect",
+   "financebench_id_00839": "correct",
+   "financebench_id_01163": "incorrect",
+   "financebench_id_00299": "correct",
+   "financebench_id_01244": "correct",
+   "financebench_id_01487": "incorrect"
+  },
+  "hybrid_bm25_dense_ollama_qwen2.5-7b": {
+   "financebench_id_00517": "correct",
+   "financebench_id_01279": "correct",
+   "financebench_id_00382": "correct",
+   "financebench_id_00724": "incorrect",
+   "financebench_id_00585": "incorrect",
+   "financebench_id_01091": "correct",
+   "financebench_id_01351": "correct",
+   "financebench_id_02049": "correct",
+   "financebench_id_00460": "correct",
+   "financebench_id_00839": "correct",
+   "financebench_id_01163": "correct",
+   "financebench_id_01482": "correct",
+   "financebench_id_00299": "incorrect",
+   "financebench_id_01487": "correct"
+  },
+  "query_expansion_ollama_qwen2.5-3b": {
+   "financebench_id_01279": "incorrect",
+   "financebench_id_00382": "correct",
+   "financebench_id_00566": "correct",
+   "financebench_id_02049": "correct",
+   "financebench_id_00460": "incorrect",
+   "financebench_id_00839": "correct",
+   "financebench_id_01163": "incorrect",
+   "financebench_id_01244": "correct",
+   "financebench_id_01487": "incorrect"
+  }
+ },
+ "notes": {
+  "financebench_id_01009": "lists subsidiary countries, not the operating regions in the expert answer",
+  "financebench_id_00566": "says debt increased; expert: it decreased",
+  "financebench_id_00724": "names the wrong region",
+  "financebench_id_01346": "right rates, but says the rate decreased when it rose",
+  "financebench_id_00585": "drops the minus sign on FY2021 (-14.8%) and so gets the comparison backwards",
+  "financebench_id_01163": "names the wrong activity",
+  "financebench_id_00299": "3B: right segment (Corporate), wrong figure; counted correct because the question asks which segment. 7B: wrong segment",
+  "financebench_id_01487": "3B hybrid and baseline: says 'increased' but with made-up percentages, counted incorrect; 7B: right numbers and conclusion",
+  "financebench_id_00460": "3B hybrid: says no change (wrong); 7B: says stores decreased (right conclusion, different store counts); baseline: no conclusion",
+  "financebench_id_00517": "3B names one category above 20%, which answers yes; 7B names two"
+ }
+}

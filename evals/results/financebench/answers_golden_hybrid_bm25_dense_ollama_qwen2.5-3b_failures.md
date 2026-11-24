@@ -2,25 +2,25 @@
 
 | Bucket | Count | Share | What would fix it |
 |---|---|---|---|
-| correct | 18 | 36% |  |
+| correct | 17 | 34% |  |
 | wrong_filing | 2 | 4% | routing: company / year / quarter detection, or ask the user which filing |
-| evidence_page_missed | 10 | 20% | ranking: better embeddings or reranker, table-aware chunks |
+| evidence_page_missed | 9 | 18% | ranking: better embeddings or reranker, table-aware chunks |
 | partial_evidence | 6 | 12% | multi-page retrieval: one search per statement (income statement AND balance sheet) |
 | refused_with_evidence | 8 | 16% | prompt / model: the context had the numbers; a bigger model or a 'find the line items first' step |
-| wrong_number | 6 | 12% | reading tables: line-item extraction before arithmetic, use a calculator tool |
-| wrong_conclusion | 0 | 0% | reasoning: bigger model, or domain hints (e.g. 'gross margin does not apply to banks') |
+| wrong_number | 5 | 10% | reading tables: line-item extraction before arithmetic, use a calculator tool |
+| wrong_conclusion | 3 | 6% | reasoning: bigger model, or domain hints (e.g. 'gross margin does not apply to banks') |
 
-Retrieval failures: 18. Generation failures: 14.
+Retrieval failures: 17. Generation failures: 16.
 
 | Bucket | calculation | judgment | lookup |
 |---|---|---|---|
-| correct | 5 | 1 | 12 |
+| correct | 6 | 1 | 10 |
 | wrong_filing | 1 | 1 | 0 |
-| evidence_page_missed | 5 | 1 | 4 |
+| evidence_page_missed | 4 | 1 | 4 |
 | partial_evidence | 6 | 0 | 0 |
 | refused_with_evidence | 0 | 3 | 5 |
-| wrong_number | 3 | 0 | 3 |
-| wrong_conclusion | 0 | 0 | 0 |
+| wrong_number | 3 | 0 | 2 |
+| wrong_conclusion | 0 | 0 | 3 |
 
 ## wrong_filing
 
@@ -78,3 +78,15 @@ Retrieval failures: 18. Generation failures: 14.
 - **financebench_id_07507**: What is Adobe's year-over-year change in unadjusted operating income from FY2015 to FY2016 (in units of percents and round to one decimal place)? Give a solution to the question by using the income statement.
   - expert: 65.4%
   - model: [Q] To find the year-over-year change in unadjusted operating income from fiscal year 2015 to fiscal year 2016, we need to calculate the percentage change between the two years using the operating income figures provided in the 10K filings. [1] For fiscal year 2016, the operating income is $1,435,1
+
+## wrong_conclusion
+
+- **financebench_id_00724**: For Pfizer, which geographic region had the biggest drop in Q22023 year over year revenues (on a percentage basis)?
+  - expert: Developed Rest of the World
+  - model: To determine which geographic region had the biggest drop in Q22023 year over year revenues, we need to compare the percentage changes in revenues for each region. The relevant information is provided in [S1] and [S2]. From [S1]: - Worldwide: -54% - U.S.: -45% - Developed Europe: -56% - Developed R
+- **financebench_id_01346**: How much has the effective tax rate of Corning changed between FY2021 and FY2022?
+  - expert: The effective tax rate of Corning has changed from 20% in FY2021 to 23% in FY 2022.
+  - model: To calculate the change in effective tax rate between FY2021 and FY2022, we use the information provided in [S2] and [S3]. From [S2]: - Effective tax rate for 2022: 22.9% - Effective tax rate for 2021: 20.2% From [S3]: - Effective tax rate for 2022: 19.3% The change in effective tax rate between
+- **financebench_id_01163**: Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Nike in FY2023?
+  - expert: Among the three, cash flow from operations was the highest for Nike in FY2023.
+  - model: To determine which activity brought in the most (or lost the least) cash flow for Nike in FY2023, we need to compare the cash flows from operations, investing, and financing activities. From the provided sources: - [S1] provides the cash flow from operations for FY2023, which is $5,841 million. - [

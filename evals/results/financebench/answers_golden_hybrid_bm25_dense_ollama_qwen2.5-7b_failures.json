@@ -5,16 +5,16 @@
   "config": "+hybrid_bm25_dense",
   "buckets": {
     "correct": {
-      "count": 18,
-      "share": 0.36
+      "count": 19,
+      "share": 0.38
     },
     "wrong_filing": {
       "count": 2,
       "share": 0.04
     },
     "evidence_page_missed": {
-      "count": 13,
-      "share": 0.26
+      "count": 12,
+      "share": 0.24
     },
     "partial_evidence": {
       "count": 5,
@@ -25,21 +25,21 @@
       "share": 0.16
     },
     "wrong_number": {
-      "count": 4,
-      "share": 0.08
+      "count": 3,
+      "share": 0.06
     },
     "wrong_conclusion": {
-      "count": 0,
-      "share": 0.0
+      "count": 1,
+      "share": 0.02
     }
   },
-  "retrieval_failures": 20,
+  "retrieval_failures": 19,
   "generation_failures": 12,
   "by_skill": {
     "calculation": {
-      "correct": 6,
+      "correct": 7,
       "wrong_filing": 1,
-      "evidence_page_missed": 6,
+      "evidence_page_missed": 5,
       "partial_evidence": 5,
       "refused_with_evidence": 1,
       "wrong_number": 1,
@@ -60,8 +60,8 @@
       "evidence_page_missed": 6,
       "partial_evidence": 0,
       "refused_with_evidence": 4,
-      "wrong_number": 3,
-      "wrong_conclusion": 0
+      "wrong_number": 2,
+      "wrong_conclusion": 1
     }
   },
   "examples": {
@@ -147,19 +147,26 @@
         "answer": "American Water Works's FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EBITDA) is $1,879 million. This is calculated by adding the operating income from the income statement ($1,196 million) to the depreciation and amortization from the cas"
       },
       {
-        "id": "financebench_id_00460",
-        "question": "Was there any change in the number of Best Buy stores between Q2 of FY2024 and FY2023?",
-        "gold_answer": "Yes, there is decline in number stores by 1.32% from 982 stores in Q2 FY 2023 to 969 by the end of Q2 FY2024.",
-        "answer": "The number of Best Buy stores decreased from 930 at the end of the second quarter of fiscal 2023 to 907 at the end of the second quarter of fiscal 2024. [S2]"
-      },
-      {
         "id": "financebench_id_00299",
         "question": "Which of JPM's business segments had the lowest net revenue in 2021 Q1?",
         "gold_answer": "Corporate. Its net revenue was -$473 million.",
         "answer": "The Asset & Wealth Management segment had the lowest net revenue in 2021 Q1, with $4,077 million [S1, S2]."
+      },
+      {
+        "id": "financebench_id_03029",
+        "question": "What is the FY2018 capital expenditure amount (in USD millions) for 3M? Give a response to the question by relying on the details shown in the cash flow statement.",
+        "gold_answer": "$1577.00",
+        "answer": "The FY2018 capital expenditure amount for 3M is $994 million. This can be derived from the capital spending details provided in [S2], where it states \"Capital Spending as of December 31, 2018 $ 994\"."
       }
     ],
-    "wrong_conclusion": []
+    "wrong_conclusion": [
+      {
+        "id": "financebench_id_00724",
+        "question": "For Pfizer, which geographic region had the biggest drop in Q22023 year over year revenues (on a percentage basis)?",
+        "gold_answer": "Developed Rest of the World",
+        "answer": "The geographic region with the biggest drop in Q22023 year over year revenues (on a percentage basis) was Emerging Markets, with a 53% decrease, as reported in [S2]."
+      }
+    ]
   },
   "per_question": [
     {
@@ -252,8 +259,8 @@
     },
     {
       "id": "financebench_id_00382",
-      "bucket": "evidence_page_missed",
-      "final_grade": "incorrect",
+      "bucket": "correct",
+      "final_grade": "correct",
       "skill": "calculation",
       "answer_type": "text",
       "evidence_pages_found": 0
@@ -268,8 +275,8 @@
     },
     {
       "id": "financebench_id_00724",
-      "bucket": "correct",
-      "final_grade": "correct",
+      "bucket": "wrong_conclusion",
+      "final_grade": "incorrect",
       "skill": "lookup",
       "answer_type": "text",
       "evidence_pages_found": 1
@@ -412,8 +419,8 @@
     },
     {
       "id": "financebench_id_00460",
-      "bucket": "wrong_number",
-      "final_grade": "incorrect",
+      "bucket": "correct",
+      "final_grade": "correct",
       "skill": "lookup",
       "answer_type": "yes_no",
       "evidence_pages_found": 1

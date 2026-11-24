@@ -156,3 +156,11 @@ def test_failure_buckets():
     assert bucket(S(**{**base, "final_grade": "refused"})) == "refused_with_evidence"
     assert bucket(S(**base)) == "wrong_number"
     assert bucket(S(**{**base, "answer_type": "text", "numeric_match": None})) == "wrong_conclusion"
+
+
+def test_final_grade_order():
+    from evalkit.metrics import final_grade
+    assert final_grade("correct", True, None) == "refused"                      # refusals by rule
+    assert final_grade("correct", False, 0.0, answer_type="number") == "incorrect"
+    assert final_grade("correct", False, 0.0, answer_type="text") == "correct"  # a text answer may skip the number
+    assert final_grade("correct", False, None, manual="incorrect") == "incorrect"

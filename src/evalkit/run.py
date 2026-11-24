@@ -141,8 +141,12 @@ def summarize(df: pd.DataFrame) -> dict:
     df["numeric_match"] = [M.numeric_match(str(a), str(g)) if not r else None
                            for a, g, r in zip(num_src, df.gold_answer, df.refused)]
     df["judge_grade"] = df.grade
-    df["grade"] = [M.final_grade(j, r, n if pd.notna(n) else None)
-                   for j, r, n in zip(df.judge_grade, df.refused, df.numeric_match)]
+    manual = M.manual_grades(M.run_name(df.config.iloc[0], df.provider.iloc[0], df.model.iloc[0]))
+    df["manual"] = df.id.map(manual) if "id" in df else None
+    atype = df.answer_type if "answer_type" in df else pd.Series([None] * len(df), index=df.index)
+    df["grade"] = [M.final_grade(j, r, n if pd.notna(n) else None, m if isinstance(m, str) else None, t)
+                   for j, r, n, m, t in zip(df.judge_grade, df.refused, df.numeric_match, df.manual, atype)]
+    graded = df[df.manual.notna()]
     correct = df.grade == "correct"
     judge_said_correct_on_refusals = (df[df.refused].judge_grade == "correct").mean() if df.refused.any() else None
     by_hit = df.assign(c=correct).groupby("retrieval_hit").c.mean().round(3).to_dict()
@@ -155,6 +159,11 @@ def summarize(df: pd.DataFrame) -> dict:
         "accuracy_llm_judge_alone": round((df.judge_grade == "correct").mean(), 3),
         "judge_called_refusals_correct": round(judge_said_correct_on_refusals, 3)
         if judge_said_correct_on_refusals is not None else None,
+        "manual_grades": len(graded),
+        "judge_agreement_with_manual": round(float((graded.judge_grade == graded.manual).mean()), 3)
+        if len(graded) else None,
+        "judge_passed_wrong_answers": f"{int(((graded.manual == 'incorrect') & (graded.judge_grade == 'correct')).sum())}"
+                                      f" of {int((graded.manual == 'incorrect').sum())}" if len(graded) else None,
         "incorrect_rate": round((df.grade == "incorrect").mean(), 3),
         "refusal_rate": round((df.grade == "refused").mean(), 3),
         "unparsed_grades": int((df.grade == "unparsed").sum()),

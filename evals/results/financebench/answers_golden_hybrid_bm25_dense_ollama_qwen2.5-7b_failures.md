@@ -2,25 +2,25 @@
 
 | Bucket | Count | Share | What would fix it |
 |---|---|---|---|
-| correct | 18 | 36% |  |
+| correct | 19 | 38% |  |
 | wrong_filing | 2 | 4% | routing: company / year / quarter detection, or ask the user which filing |
-| evidence_page_missed | 13 | 26% | ranking: better embeddings or reranker, table-aware chunks |
+| evidence_page_missed | 12 | 24% | ranking: better embeddings or reranker, table-aware chunks |
 | partial_evidence | 5 | 10% | multi-page retrieval: one search per statement (income statement AND balance sheet) |
 | refused_with_evidence | 8 | 16% | prompt / model: the context had the numbers; a bigger model or a 'find the line items first' step |
-| wrong_number | 4 | 8% | reading tables: line-item extraction before arithmetic, use a calculator tool |
-| wrong_conclusion | 0 | 0% | reasoning: bigger model, or domain hints (e.g. 'gross margin does not apply to banks') |
+| wrong_number | 3 | 6% | reading tables: line-item extraction before arithmetic, use a calculator tool |
+| wrong_conclusion | 1 | 2% | reasoning: bigger model, or domain hints (e.g. 'gross margin does not apply to banks') |
 
-Retrieval failures: 20. Generation failures: 12.
+Retrieval failures: 19. Generation failures: 12.
 
 | Bucket | calculation | judgment | lookup |
 |---|---|---|---|
-| correct | 6 | 1 | 11 |
+| correct | 7 | 1 | 11 |
 | wrong_filing | 1 | 1 | 0 |
-| evidence_page_missed | 6 | 1 | 6 |
+| evidence_page_missed | 5 | 1 | 6 |
 | partial_evidence | 5 | 0 | 0 |
 | refused_with_evidence | 1 | 3 | 4 |
-| wrong_number | 1 | 0 | 3 |
-| wrong_conclusion | 0 | 0 | 0 |
+| wrong_number | 1 | 0 | 2 |
+| wrong_conclusion | 0 | 0 | 1 |
 
 ## wrong_filing
 
@@ -72,9 +72,15 @@ Retrieval failures: 20. Generation failures: 12.
 - **financebench_id_04254**: Basing your judgments off of the cash flow statement and the income statement, what is American Water Works's FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EB
   - expert: $1832.00
   - model: American Water Works's FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EBITDA) is $1,879 million. This is calculated by adding the operating income from the income statement ($1,196 million) to the depreciation and amortization from the cas
-- **financebench_id_00460**: Was there any change in the number of Best Buy stores between Q2 of FY2024 and FY2023?
-  - expert: Yes, there is decline in number stores by 1.32% from 982 stores in Q2 FY 2023 to 969 by the end of Q2 FY2024.
-  - model: The number of Best Buy stores decreased from 930 at the end of the second quarter of fiscal 2023 to 907 at the end of the second quarter of fiscal 2024. [S2]
 - **financebench_id_00299**: Which of JPM's business segments had the lowest net revenue in 2021 Q1?
   - expert: Corporate. Its net revenue was -$473 million.
   - model: The Asset & Wealth Management segment had the lowest net revenue in 2021 Q1, with $4,077 million [S1, S2].
+- **financebench_id_03029**: What is the FY2018 capital expenditure amount (in USD millions) for 3M? Give a response to the question by relying on the details shown in the cash flow statement.
+  - expert: $1577.00
+  - model: The FY2018 capital expenditure amount for 3M is $994 million. This can be derived from the capital spending details provided in [S2], where it states "Capital Spending as of December 31, 2018 $ 994".
+
+## wrong_conclusion
+
+- **financebench_id_00724**: For Pfizer, which geographic region had the biggest drop in Q22023 year over year revenues (on a percentage basis)?
+  - expert: Developed Rest of the World
+  - model: The geographic region with the biggest drop in Q22023 year over year revenues (on a percentage basis) was Emerging Markets, with a 53% decrease, as reported in [S2].

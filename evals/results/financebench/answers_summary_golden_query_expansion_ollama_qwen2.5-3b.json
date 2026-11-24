@@ -5,11 +5,14 @@
   "provider": "ollama",
   "model": "qwen2.5:3b",
   "judge_model": "llama3.1:8b",
-  "accuracy": 0.18,
-  "accuracy_when_answered": 0.5,
+  "accuracy": 0.2,
+  "accuracy_when_answered": 0.556,
   "accuracy_llm_judge_alone": 0.66,
   "judge_called_refusals_correct": 0.625,
-  "incorrect_rate": 0.18,
+  "manual_grades": 9,
+  "judge_agreement_with_manual": 0.778,
+  "judge_passed_wrong_answers": "2 of 4",
+  "incorrect_rate": 0.16,
   "refusal_rate": 0.64,
   "unparsed_grades": 0,
   "numeric_match_when_answered": 0.5,
@@ -23,10 +26,10 @@
   "accuracy_by_question_type": {
     "domain-relevant": 0.125,
     "metrics-generated": 0.294,
-    "novel-generated": 0.118
+    "novel-generated": 0.176
   },
   "accuracy_when_retrieval_hit_vs_miss": {
-    "miss": 0.083,
+    "miss": 0.111,
     "hit": 0.429
   },
   "cost_usd_total": 0,

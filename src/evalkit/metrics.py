@@ -64,15 +64,34 @@ def numeric_match(answer: str, gold: str, rel_tol: float = 0.01) -> float | None
     return 0.0
 
 
-def final_grade(judge_grade: str, refused: bool, numeric: float | None) -> str:
-    """Combine the LLM judge with rule-based checks; the rules win.
-    The 3B judge graded most "not enough information" replies as correct, so refusals
-    are detected by rule, and a numeric answer that misses the gold number can't be correct."""
+def final_grade(judge_grade: str, refused: bool, numeric: float | None, manual: str | None = None,
+                answer_type: str | None = None) -> str:
+    """Combine the LLM judge with rule-based checks and manual grades; rules and people win.
+    The judge graded most "not enough information" replies as correct, so refusals are detected
+    by rule. A numeric answer that misses the gold number can't be correct. Yes/no and text
+    answers in the golden runs are graded by hand (evals/golden/manual_grades.json), because the
+    judge passed 10 of the 15 wrong ones in those runs."""
     if refused:
         return "refused"
-    if numeric == 0.0:
+    if manual:
+        return manual
+    if numeric == 0.0 and answer_type in (None, "number"):
         return "incorrect"
     return judge_grade
+
+
+def manual_grades(run: str) -> dict[str, str]:
+    """Manual grades for one golden run, keyed by question id ({} when there are none)."""
+    from pathlib import Path
+    p = Path(__file__).resolve().parents[2] / "evals" / "golden" / "manual_grades.json"
+    if not p.exists():
+        return {}
+    import json
+    return json.loads(p.read_text())["grades"].get(run, {})
+
+
+def run_name(config: str, provider: str, model: str) -> str:
+    return f"{config.lstrip('+')}_{provider}_{model.replace(':', '-')}"
 
 
 def citation_page_precision(cited_pages: list[str], gold: set[str]) -> float | None:

@@ -5,16 +5,16 @@
   "config": "+hybrid_bm25_dense",
   "buckets": {
     "correct": {
-      "count": 18,
-      "share": 0.36
+      "count": 17,
+      "share": 0.34
     },
     "wrong_filing": {
       "count": 2,
       "share": 0.04
     },
     "evidence_page_missed": {
-      "count": 10,
-      "share": 0.2
+      "count": 9,
+      "share": 0.18
     },
     "partial_evidence": {
       "count": 6,
@@ -25,21 +25,21 @@
       "share": 0.16
     },
     "wrong_number": {
-      "count": 6,
-      "share": 0.12
+      "count": 5,
+      "share": 0.1
     },
     "wrong_conclusion": {
-      "count": 0,
-      "share": 0.0
+      "count": 3,
+      "share": 0.06
     }
   },
-  "retrieval_failures": 18,
-  "generation_failures": 14,
+  "retrieval_failures": 17,
+  "generation_failures": 16,
   "by_skill": {
     "calculation": {
-      "correct": 5,
+      "correct": 6,
       "wrong_filing": 1,
-      "evidence_page_missed": 5,
+      "evidence_page_missed": 4,
       "partial_evidence": 6,
       "refused_with_evidence": 0,
       "wrong_number": 3,
@@ -55,13 +55,13 @@
       "wrong_conclusion": 0
     },
     "lookup": {
-      "correct": 12,
+      "correct": 10,
       "wrong_filing": 0,
       "evidence_page_missed": 4,
       "partial_evidence": 0,
       "refused_with_evidence": 5,
-      "wrong_number": 3,
-      "wrong_conclusion": 0
+      "wrong_number": 2,
+      "wrong_conclusion": 3
     }
   },
   "examples": {
@@ -159,7 +159,26 @@
         "answer": "[Q] To find the year-over-year change in unadjusted operating income from fiscal year 2015 to fiscal year 2016, we need to calculate the percentage change between the two years using the operating income figures provided in the 10K filings.\n\n[1] For fiscal year 2016, the operating income is $1,435,1"
       }
     ],
-    "wrong_conclusion": []
+    "wrong_conclusion": [
+      {
+        "id": "financebench_id_00724",
+        "question": "For Pfizer, which geographic region had the biggest drop in Q22023 year over year revenues (on a percentage basis)?",
+        "gold_answer": "Developed Rest of the World",
+        "answer": "To determine which geographic region had the biggest drop in Q22023 year over year revenues, we need to compare the percentage changes in revenues for each region. The relevant information is provided in [S1] and [S2].\n\nFrom [S1]:\n- Worldwide: -54%\n- U.S.: -45%\n- Developed Europe: -56%\n- Developed R"
+      },
+      {
+        "id": "financebench_id_01346",
+        "question": "How much has the effective tax rate of Corning changed between FY2021 and FY2022?",
+        "gold_answer": "The effective tax rate of Corning has changed from 20% in FY2021 to 23% in FY 2022.",
+        "answer": "To calculate the change in effective tax rate between FY2021 and FY2022, we use the information provided in [S2] and [S3].\n\nFrom [S2]:\n- Effective tax rate for 2022: 22.9%\n- Effective tax rate for 2021: 20.2%\n\nFrom [S3]:\n- Effective tax rate for 2022: 19.3%\n\nThe change in effective tax rate between "
+      },
+      {
+        "id": "financebench_id_01163",
+        "question": "Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Nike in FY2023?",
+        "gold_answer": "Among the three, cash flow from operations was the highest for Nike in FY2023.",
+        "answer": "To determine which activity brought in the most (or lost the least) cash flow for Nike in FY2023, we need to compare the cash flows from operations, investing, and financing activities.\n\nFrom the provided sources:\n- [S1] provides the cash flow from operations for FY2023, which is $5,841 million.\n- ["
+      }
+    ]
   },
   "per_question": [
     {
@@ -196,8 +215,8 @@
     },
     {
       "id": "financebench_id_01009",
-      "bucket": "correct",
-      "final_grade": "correct",
+      "bucket": "evidence_page_missed",
+      "final_grade": "incorrect",
       "skill": "lookup",
       "answer_type": "text",
       "evidence_pages_found": 0
@@ -252,8 +271,8 @@
     },
     {
       "id": "financebench_id_00382",
-      "bucket": "evidence_page_missed",
-      "final_grade": "incorrect",
+      "bucket": "correct",
+      "final_grade": "correct",
       "skill": "calculation",
       "answer_type": "text",
       "evidence_pages_found": 0
@@ -268,24 +287,24 @@
     },
     {
       "id": "financebench_id_00724",
-      "bucket": "correct",
-      "final_grade": "correct",
+      "bucket": "wrong_conclusion",
+      "final_grade": "incorrect",
       "skill": "lookup",
       "answer_type": "text",
       "evidence_pages_found": 1
     },
     {
       "id": "financebench_id_01077",
-      "bucket": "evidence_page_missed",
-      "final_grade": "incorrect",
+      "bucket": "correct",
+      "final_grade": "correct",
       "skill": "lookup",
       "answer_type": "text",
       "evidence_pages_found": 0
     },
     {
       "id": "financebench_id_01346",
-      "bucket": "correct",
-      "final_grade": "correct",
+      "bucket": "wrong_conclusion",
+      "final_grade": "incorrect",
       "skill": "lookup",
       "answer_type": "text",
       "evidence_pages_found": 1
@@ -436,8 +455,8 @@
     },
     {
       "id": "financebench_id_01163",
-      "bucket": "correct",
-      "final_grade": "correct",
+      "bucket": "wrong_conclusion",
+      "final_grade": "incorrect",
       "skill": "lookup",
       "answer_type": "text",
       "evidence_pages_found": 1
@@ -484,8 +503,8 @@
     },
     {
       "id": "financebench_id_00299",
-      "bucket": "wrong_number",
-      "final_grade": "incorrect",
+      "bucket": "correct",
+      "final_grade": "correct",
       "skill": "lookup",
       "answer_type": "text",
       "evidence_pages_found": 1

@@ -5,16 +5,16 @@
   "config": "+query_expansion",
   "buckets": {
     "correct": {
-      "count": 9,
-      "share": 0.18
+      "count": 10,
+      "share": 0.2
     },
     "wrong_filing": {
       "count": 14,
       "share": 0.28
     },
     "evidence_page_missed": {
-      "count": 19,
-      "share": 0.38
+      "count": 18,
+      "share": 0.36
     },
     "partial_evidence": {
       "count": 2,
@@ -25,24 +25,24 @@
       "share": 0.04
     },
     "wrong_number": {
-      "count": 3,
-      "share": 0.06
+      "count": 2,
+      "share": 0.04
     },
     "wrong_conclusion": {
-      "count": 1,
-      "share": 0.02
+      "count": 2,
+      "share": 0.04
     }
   },
-  "retrieval_failures": 35,
+  "retrieval_failures": 34,
   "generation_failures": 6,
   "by_skill": {
     "calculation": {
-      "correct": 3,
+      "correct": 5,
       "wrong_filing": 5,
-      "evidence_page_missed": 8,
+      "evidence_page_missed": 7,
       "partial_evidence": 2,
       "refused_with_evidence": 0,
-      "wrong_number": 2,
+      "wrong_number": 1,
       "wrong_conclusion": 0
     },
     "judgment": {
@@ -55,13 +55,13 @@
       "wrong_conclusion": 0
     },
     "lookup": {
-      "correct": 5,
+      "correct": 4,
       "wrong_filing": 5,
       "evidence_page_missed": 10,
       "partial_evidence": 0,
       "refused_with_evidence": 2,
       "wrong_number": 1,
-      "wrong_conclusion": 1
+      "wrong_conclusion": 2
     }
   },
   "examples": {
@@ -141,12 +141,6 @@
         "answer": "To find American Water Works' FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EBITDA), we need to use the information from the provided sources.\n\nFrom [S1], we see the operating income and depreciation and amortization for the year 2021:\nOp"
       },
       {
-        "id": "financebench_id_00566",
-        "question": "Has Verizon increased its debt on balance sheet between 2022 and the 2021 fiscal period?",
-        "gold_answer": "No. Verizon's debt decreased by $229 million.",
-        "answer": "To determine if Verizon increased its debt on the balance sheet between 2022 and 2021, we need to compare the total debt outstanding at the end of each year. [S3] provides the total debt outstanding at December 31, 2022, and [S2] provides the total debt outstanding at December 31, 2021.\n\nFor 2022:\nT"
-      },
-      {
         "id": "financebench_id_00460",
         "question": "Was there any change in the number of Best Buy stores between Q2 of FY2024 and FY2023?",
         "gold_answer": "Yes, there is decline in number stores by 1.32% from 982 stores in Q2 FY 2023 to 969 by the end of Q2 FY2024.",
@@ -159,6 +153,12 @@
         "question": "Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for AMD in FY22?",
         "gold_answer": "In 2022, AMD brought in the most cashflow from Operations",
         "answer": "To determine which of operations, investing, and financing activities brought in the most (or lost the least) cash flow for AMD in FY22, we need to analyze the cash flow statements provided in the sources.\n\nFrom [S1], we see that the cash flows for 2022 were:\n- Net cash provided by operating activit"
+      },
+      {
+        "id": "financebench_id_01163",
+        "question": "Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Nike in FY2023?",
+        "gold_answer": "Among the three, cash flow from operations was the highest for Nike in FY2023.",
+        "answer": "To determine which operations brought in the most (or lost the least) cash flow for Nike in FY2023, we need to analyze the cash flow from investing, financing, and operations activities.\n\nFrom the provided sources:\n- [S1] provides the cash flow from investing and financing activities for FY2023.\n- ["
       }
     ]
   },
@@ -253,16 +253,16 @@
     },
     {
       "id": "financebench_id_00382",
-      "bucket": "evidence_page_missed",
-      "final_grade": "incorrect",
+      "bucket": "correct",
+      "final_grade": "correct",
       "skill": "calculation",
       "answer_type": "text",
       "evidence_pages_found": 0
     },
     {
       "id": "financebench_id_00566",
-      "bucket": "wrong_number",
-      "final_grade": "incorrect",
+      "bucket": "correct",
+      "final_grade": "correct",
       "skill": "calculation",
       "answer_type": "yes_no",
       "evidence_pages_found": 1
@@ -437,8 +437,8 @@
     },
     {
       "id": "financebench_id_01163",
-      "bucket": "correct",
-      "final_grade": "correct",
+      "bucket": "wrong_conclusion",
+      "final_grade": "incorrect",
       "skill": "lookup",
       "answer_type": "text",
       "evidence_pages_found": 1

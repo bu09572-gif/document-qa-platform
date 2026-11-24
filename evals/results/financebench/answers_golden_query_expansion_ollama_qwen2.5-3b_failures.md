@@ -2,25 +2,25 @@
 
 | Bucket | Count | Share | What would fix it |
 |---|---|---|---|
-| correct | 9 | 18% |  |
+| correct | 10 | 20% |  |
 | wrong_filing | 14 | 28% | routing: company / year / quarter detection, or ask the user which filing |
-| evidence_page_missed | 19 | 38% | ranking: better embeddings or reranker, table-aware chunks |
+| evidence_page_missed | 18 | 36% | ranking: better embeddings or reranker, table-aware chunks |
 | partial_evidence | 2 | 4% | multi-page retrieval: one search per statement (income statement AND balance sheet) |
 | refused_with_evidence | 2 | 4% | prompt / model: the context had the numbers; a bigger model or a 'find the line items first' step |
-| wrong_number | 3 | 6% | reading tables: line-item extraction before arithmetic, use a calculator tool |
-| wrong_conclusion | 1 | 2% | reasoning: bigger model, or domain hints (e.g. 'gross margin does not apply to banks') |
+| wrong_number | 2 | 4% | reading tables: line-item extraction before arithmetic, use a calculator tool |
+| wrong_conclusion | 2 | 4% | reasoning: bigger model, or domain hints (e.g. 'gross margin does not apply to banks') |
 
-Retrieval failures: 35. Generation failures: 6.
+Retrieval failures: 34. Generation failures: 6.
 
 | Bucket | calculation | judgment | lookup |
 |---|---|---|---|
-| correct | 3 | 1 | 5 |
+| correct | 5 | 1 | 4 |
 | wrong_filing | 5 | 4 | 5 |
-| evidence_page_missed | 8 | 1 | 10 |
+| evidence_page_missed | 7 | 1 | 10 |
 | partial_evidence | 2 | 0 | 0 |
 | refused_with_evidence | 0 | 0 | 2 |
-| wrong_number | 2 | 0 | 1 |
-| wrong_conclusion | 0 | 0 | 1 |
+| wrong_number | 1 | 0 | 1 |
+| wrong_conclusion | 0 | 0 | 2 |
 
 ## wrong_filing
 
@@ -69,9 +69,6 @@ Retrieval failures: 35. Generation failures: 6.
 - **financebench_id_04254**: Basing your judgments off of the cash flow statement and the income statement, what is American Water Works's FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EB
   - expert: $1832.00
   - model: To find American Water Works' FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EBITDA), we need to use the information from the provided sources. From [S1], we see the operating income and depreciation and amortization for the year 2021: Op
-- **financebench_id_00566**: Has Verizon increased its debt on balance sheet between 2022 and the 2021 fiscal period?
-  - expert: No. Verizon's debt decreased by $229 million.
-  - model: To determine if Verizon increased its debt on the balance sheet between 2022 and 2021, we need to compare the total debt outstanding at the end of each year. [S3] provides the total debt outstanding at December 31, 2022, and [S2] provides the total debt outstanding at December 31, 2021. For 2022: T
 - **financebench_id_00460**: Was there any change in the number of Best Buy stores between Q2 of FY2024 and FY2023?
   - expert: Yes, there is decline in number stores by 1.32% from 982 stores in Q2 FY 2023 to 969 by the end of Q2 FY2024.
   - model: [Best Buy | 10Q 2024 | page 18] International segment stores open at the beginning and end of the second quarters of fiscal 2024 and fiscal 2023 were as follows: Fiscal 2024 Fiscal 2023 Total Stores at Beginning of Second Quarter Stores Opened Stores Closed Total Stores at End of Second Quarter Tota
@@ -81,3 +78,6 @@ Retrieval failures: 35. Generation failures: 6.
 - **financebench_id_01279**: Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for AMD in FY22?
   - expert: In 2022, AMD brought in the most cashflow from Operations
   - model: To determine which of operations, investing, and financing activities brought in the most (or lost the least) cash flow for AMD in FY22, we need to analyze the cash flow statements provided in the sources. From [S1], we see that the cash flows for 2022 were: - Net cash provided by operating activit
+- **financebench_id_01163**: Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Nike in FY2023?
+  - expert: Among the three, cash flow from operations was the highest for Nike in FY2023.
+  - model: To determine which operations brought in the most (or lost the least) cash flow for Nike in FY2023, we need to analyze the cash flow from investing, financing, and operations activities. From the provided sources: - [S1] provides the cash flow from investing and financing activities for FY2023. - [

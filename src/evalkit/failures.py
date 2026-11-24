@@ -43,8 +43,10 @@ def grade_rows(df: pd.DataFrame) -> pd.DataFrame:
     df["refused"] = df.answer.map(lambda t: Answer(str(t)).refused)
     df["numeric_match"] = [M.numeric_match(str(a), str(g)) if not r else None
                            for a, g, r in zip(df.answer, df.gold_answer, df.refused)]
-    df["final_grade"] = [M.final_grade(j, r, n if pd.notna(n) else None)
-                         for j, r, n in zip(df.grade, df.refused, df.numeric_match)]
+    manual = M.manual_grades(M.run_name(df.config.iloc[0], df.provider.iloc[0], df.model.iloc[0]))
+    atype = df.answer_type if "answer_type" in df else [None] * len(df)
+    df["final_grade"] = [M.final_grade(j, r, n if pd.notna(n) else None, manual.get(i), t)
+                         for j, r, n, i, t in zip(df.grade, df.refused, df.numeric_match, df.id, atype)]
     return df
 
 
